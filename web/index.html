@@ -1,0 +1,366 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <script src="vue.js"></script>
+        <!--script src="babel-plugin-transform-vue-jsx.min.js"></script-->
+        <script src="vuetify.js"></script>
+        <script src="vue-recyclist.js"></script>
+        <script src="vue-google-maps.js"></script>
+        <script src="require.js"></script>
+        <script src="opcodes.js"></script>
+        <script src="browserinfo.js"></script>
+        <script src="numerictesters.js"></script>
+        <script src="dialog.js"></script>
+        <script src="jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        
+        <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+        <link href="vuetify.min.css" rel="stylesheet">
+        <link href="loader_progress.css" rel="stylesheet" type="text/css">
+        <link href="extra.css" rel="stylesheet" type="text/css">
+        <!--link href="positioning.css" rel="stylesheet" type="text/css"-->
+    </head>
+    <body>
+        <div id="window">
+            <div id="app">
+            </div>
+        </div>
+        <div id="initialLoadingProgress" class="loader"></div>
+    </body>
+
+    <script>
+        
+        
+    </script>
+
+    <script>
+            function fixHeight(oldCalculation)
+            {
+                var calculationObjects = oldCalculation;
+                if(oldCalculation == null)
+                    calculationObjects = $("[calculateHeight='']");
+                else if(oldCalculation.length == 0)
+                    return;
+                for(var i = 0; i < $(calculationObjects).children().length; i++)
+                {
+                    innerCalculationObjects = $(calculationObjects).find("[calculateHeight='']");
+                    fixHeight(innerCalculationObjects);
+
+                    var objectToCalculate = $($(calculationObjects).get(i));
+                    if(objectToCalculate.attr("calculateHeight") == '')
+                    {
+                        objectToCalculate.attr("calculateHeight", 'done');
+
+                        objectToCalculate.height(objectToCalculate.children().outerHeight(true));
+                    }
+                }
+            }
+
+            function fixWidth(oldCalculation)
+            {
+                var calculationObjects = oldCalculation;
+                if(oldCalculation == null)
+                    calculationObjects = $("[calculateWidth='']");
+                else if(oldCalculation.length == 0)
+                    return;
+                for(var i = 0; i < $(calculationObjects).children().length; i++)
+                {
+                    innerCalculationObjects = $(calculationObjects).find("[calculateWidth='']");
+                    fixWidth(innerCalculationObjects);
+
+                    var objectToCalculate = $($(calculationObjects).get(i));
+                    if(objectToCalculate.attr("calculateWidth") == '')
+                    {
+                        objectToCalculate.attr("calculateWidth", 'done');
+
+                        objectToCalculate.width(objectToCalculate.children().outerWidth(true));
+                    }
+                }
+            }
+
+            var app;
+            var appa;
+            var webSocket;
+            var watcherMap = {};
+            var listResolveMap = {};
+            require(['long.js'], function(Long)
+            {
+                require(['bytebuffer'], function (ByteBuffer) {
+                    //Establish the WebSocket connection and set up event handlers
+                    webSocket = new WebSocket("ws://" + window.location.hostname + ":1724");
+                    webSocket.binaryType = "arraybuffer";
+                    webSocket.onopen = function()
+                    {
+                        console.log("opened");
+                    }
+                    webSocket.onmessage = function (msg) 
+                    { 
+                        var data = ByteBuffer.wrap(msg.data);
+
+                        var op = data.readInt();
+                        var dataToSend = new ByteBuffer();
+                        //console.log(op);
+                        switch(op)
+                        {
+                            case SMSG_SERVER_WELCOME:
+                            {
+                                var browserInfo = new BrowserInfo();
+                                var payload = JSON.stringify(browserInfo);
+                                dataToSend.writeInt(CMSG_CLIENT_DATA);
+                                dataToSend.writeInt(payload.length);
+                                dataToSend.writeString(payload);
+                            }break;
+                            case SMSG_SESSION:
+                            {
+                                var htmlLength = data.readInt();
+                                var html = data.readUTF8String(htmlLength);
+                                var vapp = "<v-app>";
+                                var html = addStaticDialogsHtml(html);                                
+                                vapp += html;
+                                vapp += "</v-app">
+                                $("#app").html(vapp);
+                                $("#initialLoadingProgress").hide();
+
+                                var jsCoreLength = data.readInt();
+                                var jsCore = data.readUTF8String(jsCoreLength);
+                                eval(jsCore);
+
+                                var jsLength = data.readInt();
+                                var js = data.readUTF8String(jsLength);
+                                var jsObj = JSON.parse(js);
+                                jsObj = addStaticDialogsModel(jsObj);
+
+                                var watchLength = data.readInt();
+                                var watchStr = data.readUTF8String(watchLength);
+                                var watchObj = JSON.parse(watchStr);
+                                watchObj = addStaticDialogsWatch(watchObj);
+
+                                var methodLength = data.readInt();
+                                var methodStr = data.readUTF8String(methodLength);
+                                var methodObj = JSON.parse(methodStr);
+
+                                var methodMap = {};
+                                for(var i = 0; i < methodObj.method.length; i++)
+                                {
+                                    var idObj = methodObj.method[i];
+                                    methodMap[idObj.idWatch] = eval(idObj.idWatch + " = function(event) { }");
+                                }
+                                app = new Vue({
+                                    el: '#app',
+                                    data: jsObj,
+                                    methods: methodMap
+                                });
+                                for(var i = 0; i < watchObj.watch.length; i++)
+                                {
+                                    var idObj = watchObj.watch[i];
+
+                                    var inFunc = (function(idObj){
+                                    var _idObj = idObj;
+                                    return {
+                                        valueChange:function(newVal, oldVal) 
+                                        {
+                                            var dataToSend = new ByteBuffer();
+                                            dataToSend.writeInt(CMSG_VALUE_CHANGE);
+                                            dataToSend.writeInt(idObj.id.length);
+                                            dataToSend.writeString(idObj.id);
+                                            dataToSend.writeInt(idObj.idWatch.length);
+                                            dataToSend.writeString(idObj.idWatch);
+                                            dataToSend = writeVariable(dataToSend, newVal);
+                                            dataToSend.flip();
+                                            webSocket.send(dataToSend.toBuffer());
+                                        }
+                                    };
+                                    })(idObj);
+                                    var func = app.$watch(idObj.idWatch, inFunc.valueChange);
+
+                                    watcherMap[idObj.idWatch] = func;
+                                }
+
+                                dataToSend.writeInt(CMSG_SESSION_ACCEPTED);
+
+                                //Fix relative->absolute layouts
+                                fixHeight(null);
+                                fixWidth(null);
+                            }break;
+                            case SMSG_DATA_CHANGED:
+                            {
+                                var total = data.readInt();
+
+                                for(var i = 0; i < total; i++)
+                                {
+                                    var idLength = data.readInt();
+                                    var id = data.readUTF8String(idLength);
+                                    
+                                    var payloadObj = readVariable(data);
+
+                                    app[id] = payloadObj;
+                                }
+
+                                //No need to update anything
+                                return;
+                            }break;
+                            case SMSG_REGISTER_EVENT:
+                            {
+                                var type = data.readInt();
+                                var idLength = data.readInt();
+                                var id = data.readUTF8String(idLength);
+                                var idDataLength = data.readInt();
+                                var idData = data.readUTF8String(idDataLength);
+                                var eventLength = data.readInt();
+                                var event = data.readUTF8String(eventLength);
+                                if(type == EVENT_TYPE_METHOD)
+                                {
+                                    //app['' + idData] = function (evt)
+                                    window['' + idData] = function (evt)
+                                    {
+                                        var dataToSend = new ByteBuffer();
+                                        dataToSend.writeInt(CMSG_GUI_EVENT);
+                                        dataToSend.writeInt(idLength);
+                                        dataToSend.writeString(id);
+                                        dataToSend.writeInt(idDataLength);
+                                        dataToSend.writeString(idData);
+                                        dataToSend.writeInt(eventLength);
+                                        dataToSend.writeString(event);
+                                        for (var i = 0; i < arguments.length; i++) 
+                                            dataToSend = writeVariable(dataToSend, arguments[i]);
+                                        dataToSend = writeVariable(dataToSend, null);
+                                        dataToSend.flip();
+                                        webSocket.send(dataToSend.toBuffer());
+                                    }
+                                    app['' + idData] = window['' + idData];
+                                    /*Object.defineProperty(window['' + idData], 'name', {value: '' + idData, writable: false});
+                                    app['' + idData] = window.ListViewTestItemSelected.bind(app);*/
+                                }
+                                else if(type == EVENT_TYPE_WATCH)
+                                {
+                                    if(watcherMap[idData] != null)
+                                        watcherMap[idData]();
+                                    watcherMap[idData] = app.$watch(idData, 
+                                    function(newVal, oldVal) 
+                                    {
+                                        var dataToSend = new ByteBuffer();
+                                        dataToSend.writeInt(CMSG_GUI_EVENT);
+                                        dataToSend.writeInt(idLength);
+                                        dataToSend.writeString(id);
+                                        dataToSend.writeInt(idDataLength);
+                                        dataToSend.writeString(idData);
+                                        dataToSend.writeInt(eventLength);
+                                        dataToSend.writeString(event);
+                                        dataToSend = writeVariable(dataToSend, newVal);
+                                        dataToSend = writeVariable(dataToSend, null);
+                                        dataToSend.flip();
+                                        webSocket.send(dataToSend.toBuffer());
+                                    });
+                                }
+                                
+                                return;
+                            }break;
+                            case SMSG_TOAST:
+                            {
+                                var textLength = data.readInt();
+                                var text = data.readUTF8String(textLength);
+                                var timeout = data.readInt();
+
+                                app.toast_timeout = timeout;
+                                app.toast_text = text;
+                                app.toast_model = true;
+                                return;
+                            }break;
+                            case SMSG_VIEW_FOR_INDEX:
+                            {
+                                var idLength = data.readInt();
+                                var id = data.readUTF8String(idLength);
+                                var itemNameLength = data.readInt();
+                                var itemName = data.readUTF8String(itemNameLength);
+                                var index = data.readInt();
+                                var layoutLength = data.readInt();
+                                var layout = data.readUTF8String(layoutLength);
+
+                                var jsCoreLength = data.readInt();
+                                var jsCore = data.readUTF8String(jsCoreLength);
+                                eval(jsCore);
+
+                                var jsLength = data.readInt();
+                                var js = data.readUTF8String(jsLength);
+                                var jsObj = JSON.parse(js);
+
+                                var watchLength = data.readInt();
+                                var watchStr = data.readUTF8String(watchLength);
+                                var watchObj = JSON.parse(watchStr);
+
+                                var methodLength = data.readInt();
+                                var methodStr = data.readUTF8String(methodLength);
+                                var methodObj = JSON.parse(methodStr);
+
+                                var methodMap = {};
+                                for(var i = 0; i < methodObj.method.length; i++)
+                                {
+                                    var idObj = methodObj.method[i];
+                                    methodMap[idObj.idWatch] = eval(idObj.idWatch + " = function(event) { }");
+                                }
+                                listResolveMap[itemName]({
+                                    data: function() { return jsObj },
+                                    methods: methodMap,
+                                    template: layout,
+                                    props: ['index']
+                                });
+                                for(var i = 0; i < watchObj.watch.length; i++)
+                                {
+                                    var idObj = watchObj.watch[i];
+                                    var func = app.$watch(idObj.idWatch, 
+                                    function(newVal, oldVal) 
+                                    {
+                                        var dataToSend = new ByteBuffer();
+                                        dataToSend.writeInt(CMSG_VALUE_CHANGE);
+                                        dataToSend.writeInt(idObj.id.length);
+                                        dataToSend.writeString(idObj.id);
+                                        dataToSend.writeInt(idObj.idWatch.length);
+                                        dataToSend.writeString(idObj.idWatch);
+                                        dataToSend = writeVariable(dataToSend, newVal);
+                                        dataToSend.flip();
+                                        webSocket.send(dataToSend.toBuffer());
+                                    });
+
+                                    watcherMap[idObj.idWatch] = func;
+                                }
+
+                                var ref = id + "ListRef";
+                                app.$refs[ref].getStartItemOffset();
+                                app.$refs[ref].items.forEach((item) => { 
+                                    item.loaded = false
+                                });
+                                app.$refs[ref].loadItems();
+                            }break;
+                            case SMSG_CHANGE_PAGE:
+                            {
+                                var id = readVariable(data);
+                                var ui = readVariable(data);
+                                document.location.href = "/index.html?page=" + ui;
+                            }break;
+                            case SMSG_DIALOG:
+                            {
+
+                            }break;
+                            case SMSG_LIST_REFRESH:
+                            {
+                                var idLength = data.readInt();
+                                var id = data.readUTF8String(idLength);
+
+                                var ref = id + "ListRef";
+                                app.$refs[ref].getStartItemOffset();
+                                app.$refs[ref].items.forEach((item) => { 
+                                    item.loaded = false
+                                });
+                                app.$refs[ref].loadItems();
+                            }break;
+                        }
+                        dataToSend.flip();
+                        webSocket.send(dataToSend.toBuffer());
+                    };
+                    webSocket.onclose = function () 
+                    { 
+                        console.log("closed"); 
+                    };
+                });
+            });
+    </script>
+</html>

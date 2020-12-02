@@ -1,0 +1,58 @@
+<LinearLayout
+    lua:id="formTestFL"
+    android:id="@+id/formTestFL"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:lua="http://schemas.android.com/apk/res/com.Resto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="#7993AB">
+    <!--LGFrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"-->
+        <LGLinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+            <LGButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+            </LGButton>
+            <LGButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                >
+
+            </LGButton>
+
+            <LGButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+            >
+
+            </LGButton>
+
+
+            <LGLinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LGButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp">
+                </LGButton>
+
+                <LGButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+                </LGButton>
+            </LGLinearLayout>
+        </LGLinearLayout>
+
+    <!--/LGFrameLayout-->
+</LinearLayout>

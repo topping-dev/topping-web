@@ -1,0 +1,17 @@
+.dialog.dialog--active, .dialog.dialog-transition-leave-active {
+    width: unset;
+}
+
+div.checkbox div.input-group__input { 
+    top: -14% !important; 
+}
+
+div.grow button {
+    padding-right:10px; 
+    width:98.0%;
+}
+
+/*div.shrink button {
+    padding-right:10px; 
+    width:auto;
+}*/

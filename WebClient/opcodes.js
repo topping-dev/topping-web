@@ -1,0 +1,4 @@
+const SMSG_SERVER_WELCOME = 0;
+const CMSG_CLIENT_DATA = 1;
+const SMSG_SESSION = 2;
+const CMSG_SESSION = 3;

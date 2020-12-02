@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="vuetify.js"></script>
+        <script src="require.js"></script>
+        <script src="opcodes.js"></script>
+        <script src="browserinfo.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!--script src="bytebuffer.js"></script-->
+        
+        <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+        <link href="vuetify.min.css" rel="stylesheet">
+        <link href="loader_progress.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="window">
+            <div id="app">
+            </div>
+        </div>
+        <div id="initialLoadingProgress" class="loader"></div>
+    </body>
+
+    <script>
+            require(['long.js'], function(Long)
+            {
+                require(['bytebuffer'], function (ByteBuffer) {
+                    //Establish the WebSocket connection and set up event handlers
+                    var webSocket = new WebSocket("ws://localhost:8887");
+                    webSocket.binaryType = "arraybuffer";
+                    webSocket.onopen = function()
+                    {
+                        console.log("opened");
+                    }
+                    webSocket.onmessage = function (msg) 
+                    { 
+                        var data = ByteBuffer.wrap(msg.data);
+
+                        var op = data.readInt();
+                        var dataToSend = new ByteBuffer();
+                        switch(op)
+                        {
+                            case SMSG_SERVER_WELCOME:
+                            {
+                                var browserInfo = new BrowserInfo();
+                                var payload = JSON.stringify(browserInfo);
+                                dataToSend.writeInt(CMSG_CLIENT_DATA);
+                                dataToSend.writeInt(payload.length);
+                                dataToSend.writeString(payload);
+                            }break;
+                            case SMSG_SESSION:
+                            {
+                                var htmlLength = data.readInt();
+                                var html = data.readUTF8String(htmlLength + 1);
+                                var vapp = "<v-app>";
+                                vapp += html;
+                                vapp += "</v-app">
+                                $("#app").html(vapp);
+                                $("#initialLoadingProgress").hide();
+
+                                var jsLength = data.readInt();
+                                var js = data.readUTF8String(jsLength);
+                                var jsObj = JSON.parse(js);
+
+                                var app = new Vue({
+                                    el: '#app',
+                                    data: jsObj
+                                });
+                                /*app.$watch('message', 
+                                function (newVal, oldVal) {
+                                    console.log("watch");
+                                });*/
+                            }break;
+                        }
+                        dataToSend.flip();
+                        webSocket.send(dataToSend.toBuffer());
+                    };
+                    webSocket.onclose = function () 
+                    { 
+                        console.log("closed"); 
+                    };
+                });
+            });
+    </script>
+</html>

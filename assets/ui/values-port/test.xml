@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <dimen name="testdimen">10dp</dimen>
+    <color name="testcolor">#FF0000</color>
+    <string name="teststring">asdasd</string>
+</resources>

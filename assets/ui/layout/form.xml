@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    lua:id="formTestLL"
+    android:id="@+id/formTestLL"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:lua="http://schemas.android.com/apk/res/com.Resto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="#7993AB">
+	<LGAutoCompleteTextView
+	    android:id="@+id/formTestAutoCompTV"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content">
+	</LGAutoCompleteTextView>
+	<LGButton
+	    lua:id="formTestButton"
+	    android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:text="Button Text"
+		android:textSize="15dp"
+        android:textColor="#AABBCC">
+	</LGButton>
+	<LGCheckBox
+	    lua:id="formTestCheckBox"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="Checkbox text">
+	</LGCheckBox>
+	<LGComboBox
+	    lua:id="formTestComboBox"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content">
+	</LGComboBox>
+	<LGEditText
+	    lua:id="formTestEt"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content">
+	</LGEditText>
+	<LGProgressBar
+	    lua:id="formTestProgressBar"
+        style="@android:style/@Widget.ProgressBar.Horizontal"
+		android:indeterminate="true"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content">
+	</LGProgressBar>
+	<LGImageView
+	    lua:id="formTestIv"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+        android:src="@drawable/merkut">
+	</LGImageView>
+    <LGRadioGroup
+        lua:id="formTestRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LGRadioButton
+            lua:id="formTestRadioButtonA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test a">
+        </LGRadioButton>
+        <LGRadioButton
+            lua:id="formTestRadioButtonB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test b">
+        </LGRadioButton>
+    </LGRadioGroup>
+</LinearLayout>

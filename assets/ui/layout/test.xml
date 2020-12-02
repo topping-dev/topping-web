@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LGScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground">
+
+    <LGLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/colorBackground"
+        android:orientation="vertical">
+
+        <LGLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="32dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp">
+
+            <LGSpinner
+                android:id="@+id/spn_formulas"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:prompt="@string/spinner_title_calculation_type"
+                android:spinnerMode="dialog"
+                android:tooltipText="Calculation Type"
+                tools:targetApi="o" />
+
+            <LGSpinner
+                android:id="@+id/spn_filaments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:prompt="@string/spinner_title_filament"
+                android:spinnerMode="dialog"
+                android:tooltipText="Filament"
+                tools:targetApi="o" />
+
+            <!--        Print       -->
+            <LGLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <LGTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Print"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textStyle="bold" />
+
+                <LGLinearLayout
+                    android:id="@+id/ll_model_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="1">
+
+                    <LGEditText
+                        android:id="@+id/et_model_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Filament consumed"
+                        android:inputType="numberDecimal"
+                        android:tag="1" />
+
+                    <LGSpinner
+                        android:id="@+id/spn_model_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:spinnerMode="dropdown" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_model_mm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="0">
+
+                    <LGEditText
+                        android:id="@+id/et_model_mm"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Filament consumed"
+                        android:inputType="numberDecimal"
+                        android:tag="0" />
+
+                    <LGSpinner
+                        android:id="@+id/spn_model_mm"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:spinnerMode="dropdown" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_filament_length"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="0">
+
+                    <LGEditText
+                        android:id="@+id/et_filament_length"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Filament unit length"
+                        android:inputType="numberDecimal"
+                        android:tag="0" />
+
+                    <LGTextView
+                        android:id="@+id/tv_filament_length"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="meters"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_filament_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="1">
+
+                    <LGEditText
+                        android:id="@+id/et_filament_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Filament unit weight"
+                        android:inputType="numberDecimal"
+                        android:tag="1" />
+
+                    <LGTextView
+                        android:id="@+id/tv_filament_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="grams"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_filament_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="-1">
+
+                    <LGEditText
+                        android:id="@+id/et_filament_price"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Filament price"
+                        android:inputType="numberDecimal"
+                        android:tag="-1" />
+
+                    <LGTextView
+                        android:id="@+id/tv_filament_price"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="price"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGCheckBox
+                    android:id="@+id/cb_add_other_costs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add other costs" />
+
+                <LGTextView
+                    android:id="@+id/tv_other_costs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Other Costs"
+                    android:enabled="false"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textStyle="bold" />
+
+                <LGSpinner
+                    android:id="@+id/spn_constants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:prompt="@string/spinner_title_constant"
+                    android:spinnerMode="dialog"
+                    android:enabled="false" />
+
+                <LGLinearLayout
+                    android:id="@+id/ll_print_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <LGEditText
+                        android:id="@+id/et_print_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:hint="Print time"
+                        android:enabled="false"
+                        android:inputType="numberDecimal"
+                        android:tag="1" />
+
+                    <LGSpinner
+                        android:id="@+id/spn_print_time_sign"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:spinnerMode="dropdown" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_electricity_unit_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="1">
+
+                    <LGEditText
+                        android:id="@+id/et_electricity_unit_cost"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="Electricity unit cost"
+                        android:inputType="numberDecimal"
+                        android:enabled="false"
+                        android:tag="1" />
+
+                    <LGTextView
+                        android:id="@+id/tv_electricity_unit_cost"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="price"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_printer_consumption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="1">
+
+                    <LGEditText
+                        android:id="@+id/et_printer_consumption"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:enabled="false"
+                        android:layout_weight="2"
+                        android:hint="Printer consumption"
+                        android:inputType="numberDecimal"
+                        android:tag="1" />
+
+                    <LGTextView
+                        android:id="@+id/tv_printer_consumption"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="kw / h"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGLinearLayout
+                    android:id="@+id/ll_monthly_constants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:tag="1">
+
+                    <LGEditText
+                        android:id="@+id/et_monthly_constants"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:enabled="false"
+                        android:hint="Monthly constants"
+                        android:inputType="numberDecimal"
+                        android:tag="1" />
+
+                    <LGTextView
+                        android:id="@+id/tv_monthly_constants"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="price"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textStyle="italic" />
+                </LGLinearLayout>
+
+                <LGTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Total Cost"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textStyle="bold" />
+
+                <LGTextView
+                    android:id="@+id/tvCost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="21sp" />
+            </LGLinearLayout>
+
+            <LGLinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp">
+
+                <LGButton
+                    android:id="@+id/btnSavePrint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_rounded_corner"
+                    android:text="Save"
+                    android:enabled="false"
+                    android:textColor="@android:color/white" />
+
+                <LGButton
+                    android:id="@+id/btnCalculate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_rounded_corner"
+                    android:text="Calculate"
+                    android:textColor="@android:color/white" />
+            </LGLinearLayout>
+        </LGLinearLayout>
+    </LGLinearLayout>
+</LGScrollView>
